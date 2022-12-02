@@ -24,11 +24,6 @@ class Outcome(Enum):
 class Day02(Solution):
     name = "02"
 
-    def read(self, part: int) -> list[str]:
-        with open(f"inputs/{self.name}_{part}.txt", encoding="utf-8") as f:
-            puzzle_input = f.readlines()
-        return puzzle_input
-
     def part_one(self, game_rounds: list[str]) -> int:
         total_score: int = 0
         my_map = {"X": ActionOne.ROCK, "Y": ActionOne.PAPER, "Z": ActionOne.SCISSORS}

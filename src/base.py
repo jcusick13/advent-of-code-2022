@@ -9,8 +9,8 @@ class Solution:
         # Two digit day, e.g. "04"
         raise NotImplementedError
 
-    def read(self, part: int):
-        with open(f"inputs/{self.name}_{part}.txt", encoding="utf-8") as f:
+    def read(self):
+        with open(f"inputs/{self.name}.txt", encoding="utf-8") as f:
             puzzle_input = f.readlines()
         return puzzle_input
 
@@ -28,11 +28,11 @@ class Solution:
         part_two = (part == 2) or (part is None)
 
         if part_one:
-            input_one = self.read(1)
+            input_one = self.read()
             solution_one = self.part_one(input_one)
             print(f"Soln part one: {solution_one}")
 
         if part_two:
-            input_two = self.read(2)
+            input_two = self.read()
             solution_two = self.part_two(input_two)
             print(f"Soln part two: {solution_two}")

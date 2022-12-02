@@ -4,11 +4,6 @@ from src.base import Solution
 class Day01(Solution):
     name = "01"
 
-    def read(self, part: int) -> list[str]:
-        with open(f"inputs/{self.name}_{part}.txt", encoding="utf-8") as f:
-            puzzle_input = f.readlines()
-        return puzzle_input
-
     def part_one(self, calorie_list: list[str]) -> int:
         max_calories: int = 0
         current_calories: int = 0
