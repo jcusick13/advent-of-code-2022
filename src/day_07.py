@@ -38,11 +38,11 @@ def get_directory_sizes(
     nodes: dict[Node, list[Node]],
     start_node: Node,
     visited: set[Node],
-) -> dict[str, int]:
+) -> list[int]:
     """Perform depth-first traversal of nodes, accumulating
     the size underneath a node as it's traversed back on the
-    way up. Returns a mapping of node name to total size for
-    all nodes that are a directory.
+    way up. Returns a list of total size for all nodes that
+    are a directory.
     """
     if start_node not in visited:
         visited.add(start_node)
@@ -53,7 +53,7 @@ def get_directory_sizes(
 
             child_node.parent.size += child_node.size
 
-    return {node.name: node.size for node in nodes.keys() if node.is_dir}
+    return [node.size for node in nodes.keys() if node.is_dir]
 
 
 class Day07(Solution):
@@ -68,12 +68,24 @@ class Day07(Solution):
             start_node=fs.root,
             visited=visited,
         )
-        print(sizes)
+        return sum(size for size in sizes if size <= 100_000)
 
-        return sum(size for size in sizes.values() if size <= 100_000)
+    def part_two(self, display: list[str]) -> int:
+        total_disk_size = 70_000_000
+        space_for_update = 30_000_000
 
-    def part_two(self, commands: list[str]) -> int:
-        return -1
+        fs = self.build_filesystem(display)
+        visited: set[Node] = set()
+        sizes = get_directory_sizes(
+            nodes=fs.nodes,
+            start_node=fs.root,
+            visited=visited,
+        )
+
+        current_usage = total_disk_size - max(sizes)
+        needed_space = space_for_update - current_usage
+
+        return min([size for size in sizes if size >= needed_space])
 
     def build_filesystem(self, display: list[str]) -> FileSystem:
         fs = FileSystem.new()
@@ -122,4 +134,4 @@ class Day07(Solution):
 
 
 if __name__ == '__main__':
-    Day07().solve(1)
+    Day07().solve()
