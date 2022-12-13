@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from ast import literal_eval
+from dataclasses import dataclass, field
 from src.base import Solution
 
 
@@ -10,6 +13,19 @@ class Fail(Exception):
     ...
 
 
+@dataclass
+class Packet:
+    value: list = field(default_factory=list)
+
+    def __eq__(self, other: Packet):
+        correct_forward = packets_are_correctly_ordered(self.value, other.value)
+        correct_backward = packets_are_correctly_ordered(other.value, self.value)
+        return correct_forward & correct_backward
+
+    def __lt__(self, other: Packet):
+        return packets_are_correctly_ordered(self.value, other.value)
+
+
 class Day13(Solution):
     name = "13"
 
@@ -18,22 +34,41 @@ class Day13(Solution):
 
         for i, packet in enumerate(radio_packets):
             if i % 3 == 0:
-                left_packet = literal_eval(packet.rstrip())
+                left_packet = Packet(value=literal_eval(packet.rstrip()))
             elif i % 3 == 1:
-                right_packet = literal_eval(packet.rstrip())
+                right_packet = Packet(value=literal_eval(packet.rstrip()))
 
             else:
                 group_idx = (i // 3) + 1
                 if packets_are_correctly_ordered(
-                    left_packet,
-                    right_packet,
+                    left_packet.value,
+                    right_packet.value,
                 ):
                     sum_of_correct_indicies += group_idx
 
         return sum_of_correct_indicies
 
     def part_two(self, radio_packets: list[str]) -> int:
-        return -1
+        packets: list[Packet] = []
+        for packet in radio_packets:
+            if packet == "\n":
+                continue
+
+            packets.append(Packet(value=literal_eval(packet.rstrip())))
+
+        packets.append(Packet(value=[[2]]))
+        packets.append(Packet(value=[[6]]))
+
+        packet_a: int = 0
+        packet_b: int = 0
+        for i, packet in enumerate(sorted(packets)):
+            if packet.value == [[[[2]]]]:
+                packet_a = i + 1
+
+            if packet.value == [[[[6]]]]:
+                packet_b = i + 1
+
+        return packet_a * packet_b
 
 
 def packets_are_correctly_ordered(left: list, right: list) -> bool:
@@ -119,4 +154,4 @@ if __name__ == '__main__':
     r = [[], [[[4, 2, 3], 5, [2, 7, 8], 5]]]
     # print(packets_are_correctly_ordered(l, r))
     # assert_tests()
-    Day13().solve(1)
+    Day13().solve()
